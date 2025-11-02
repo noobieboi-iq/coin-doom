@@ -5,19 +5,36 @@ pg.init()
 clock = pg.time.Clock()
 screen =pg.display.set_mode((800, 800))
 
+fps =144
+
 dx=400
 dy=400
+
+points =0
 
 cx =random.randint(0,800)
 cy =random.randint(0,800)
 
-points =0
 
 font =pg.font.SysFont('Comic Sans MS', 30)
 
-def say(position, txt):
+def say(pos, txt):
     text = font.render(txt, False, (0, 0, 0))
-    screen.blit(text,position)
+    screen.blit(text,pos)
+
+class Button:
+    def __init__(self,size,pos,color):
+        self.rect =pg.Rect(pos,size)
+        self.color=color
+    
+    def is_hovering(self,mouse_pos):
+        return self.rect.collidepoint(mouse_pos)
+    
+    def show(self, surface):
+        pg.draw.rect(surface, self.color, self.rect)
+        if self.is_hovering(pg.mouse.get_pos()):
+            pg.draw.rect(surface,(255,255,0),self.rect,2)
+        
 
 background =pg.image.load("pictures/background.png")
 
@@ -30,25 +47,35 @@ token =pg.transform.smoothscale(token,(32,32))
 screen.blit(token,(cx,cy))
 alive =True
 
-fps =144
+restart_button =Button((40,50),(700,650),(255,0,0))
 
-timer =10
+timer =2
     
 run = True
 while run:
-    for event in pg.event.get():
+    pressed=False
+    for event in pg.event.get():     
         if event.type==pg.QUIT:
             run = False
-    
+            
+        if event.type == pg.MOUSEBUTTONUP:
+            pressed = True
+            
+            
     timer-=1/fps
     screen.blit(background,(0,0))
     
     if timer<=0:
         say((300,400),"Game Over")
         say((300,350),f"Score: {points}")
+        say((550,650),"restart! ->")
+        restart_button.show(screen)
+        if restart_button.is_hovering(pg.mouse.get_pos()) and pressed:
+            points =0
+            timer =10
+            alive =False
         
     else:
-            
         k =pg.key.get_pressed()
         if k[pg.K_w]:
             dy-=1
