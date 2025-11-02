@@ -49,7 +49,7 @@ alive =True
 
 restart_button =Button((40,50),(700,650),(255,0,0))
 
-timer =2
+timer =10
     
 run = True
 while run:
@@ -104,3 +104,4 @@ while run:
 
     pg.display.flip()
     clock.tick(fps)
+
